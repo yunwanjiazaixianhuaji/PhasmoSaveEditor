@@ -130,7 +130,7 @@ dotnet run --project tests/CoreTests/CoreTests.csproj    # 加解密 / 597 字�
 dotnet run --project tests/E2ETests/E2ETests.csproj      # 改动生效 / 逐字节不变 / 完整写入链路
 ```
 
-测试需要一个真实的加密存档作为输入（默认读 `%USERPROFILE%\AppData\LocalLow\Kinetic Games\Phasmophobia\SaveFile.txt`）。当前断言数：**CoreTests 245 项 + E2ETests 84 项**。
+测试需要一个真实的加密存档作为输入（默认读 `%USERPROFILE%\AppData\LocalLow\Kinetic Games\Phasmophobia\SaveFile.txt`）。当前断言数：**CoreTests 244 项 + E2ETests 84 项**（另有少量字段随游戏版本缺失时显示为 `[SKIP]`，不计失败）。
 
 改完加密逻辑或解析器务必重跑这两个——历史上出过 5 个「编译通过但会写坏存档」的问题，全靠它们兜住：
 
