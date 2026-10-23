@@ -1,0 +1,180 @@
+<Window x:Class="PhasmoSaveEditor.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:PhasmoSaveEditor.Views"
+        Title="恐鬼症存档修改器" Height="780" Width="1180"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}">
+
+    <Window.Resources>
+        <v:FieldTemplateSelector x:Key="FieldSelector"/>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- 路径栏 -->
+            <RowDefinition Height="Auto"/>   <!-- 概览栏 -->
+            <RowDefinition Height="Auto"/>   <!-- 预设栏 -->
+            <RowDefinition Height="*"/>     <!-- 主体 -->
+            <RowDefinition Height="Auto"/>   <!-- 状态栏 -->
+        </Grid.RowDefinitions>
+
+        <!-- 路径栏 -->
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="存档文件" Margin="0,0,8,0"/>
+            <TextBox Grid.Column="1" FontFamily="Consolas" FontSize="12"
+                     Text="{Binding SavePath, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" Margin="8,0,0,0"/>
+            <Button Grid.Column="3" Content="读取存档" Command="{Binding LoadCommand}"/>
+        </Grid>
+
+        <!-- 概览栏 -->
+        <Border Grid.Row="1" Background="{StaticResource PanelBrush}" CornerRadius="4"
+                Padding="10,6" Margin="0,0,0,8">
+            <TextBlock Text="{Binding SummaryText}" Foreground="{StaticResource AccentBrush}"
+                       FontWeight="SemiBold"/>
+        </Border>
+
+        <!-- 预设栏 -->
+        <Border Grid.Row="2" Background="{StaticResource PanelBrush}" CornerRadius="4"
+                Padding="10,8" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="一键预设（只改内存中的值，仍需点「应用修改」才写盘）"
+                           Foreground="{StaticResource DimBrush}" FontSize="11" Margin="0,0,0,6"/>
+                <WrapPanel>
+                    <Button Content="解锁全装备 + 全三阶" Click="OnPresetUnlockAll"/>
+                    <Button Content="金钱拉满 + 库存拉满" Click="OnPresetMaxMoney"/>
+                    <Button Content="全成就 / 挑战完成" Click="OnPresetCompleteAll"/>
+
+                    <Separator Width="12" Background="Transparent"/>
+                    <TextBlock Text="等级" Margin="0,0,4,0"/>
+                    <TextBox Width="60" Text="{Binding PresetLevelText, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="转生" Margin="8,0,4,0"/>
+                    <TextBox Width="50" Text="{Binding PresetPrestigeText, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Content="本级经验归零" IsChecked="{Binding PresetResetLevelXp}"
+                              Margin="8,0,8,0"
+                              ToolTip="勾选后把 Experience（本级进度）置 0；默认保留原进度"/>
+                    <Button Content="设定等级" Click="OnPresetSetLevel"/>
+
+                    <Separator Width="12" Background="Transparent"/>
+                    <TextBlock Text="库存上限" Margin="0,0,4,0"/>
+                    <TextBox Width="50" Text="{Binding PresetInventoryCapText, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="拉满库存时使用的数值，默认 99"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- 主体：左分类树 + 右字段列表 -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="210"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 分类树 -->
+            <Border Background="{StaticResource PanelBrush}" CornerRadius="4" Padding="6"
+                    Margin="0,0,8,0">
+                <ListBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
+                         Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="6,5"/>
+                            <Setter Property="Foreground" Value="{StaticResource FgBrush}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="bd" Background="Transparent" CornerRadius="3"
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#30313A"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#33445C"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Border>
+
+            <!-- 右侧：搜索 + 字段列表 -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="搜索" Margin="0,0,8,0"/>
+                    <TextBox Grid.Column="1"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="按字段名或中文名过滤"/>
+                    <CheckBox Grid.Column="2" Content="仅显示已修改" IsChecked="{Binding OnlyModified}"
+                              Margin="12,0,0,0"/>
+                    <TextBlock Grid.Column="3" Margin="12,0,0,0" Foreground="{StaticResource DimBrush}"
+                               VerticalAlignment="Center">
+                        <Run Text="已改 "/><Run Text="{Binding ModifiedCount, Mode=OneWay}"/><Run Text=" 项"/>
+                    </TextBlock>
+                    <Button Grid.Column="4" Content="还原全部" Command="{Binding RevertAllCommand}"
+                            Margin="12,0,0,0"/>
+                </Grid>
+
+                <ListBox Grid.Row="1" ItemsSource="{Binding VisibleFields}"
+                         ItemTemplateSelector="{StaticResource FieldSelector}"
+                         Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <ContentPresenter/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Grid>
+
+        <!-- 状态栏 -->
+        <Grid Grid.Row="4" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"
+                       Foreground="{StaticResource WarnBrush}"/>
+            <Button Grid.Column="1" Content="应用修改" Style="{StaticResource PrimaryButton}"
+                    IsEnabled="{Binding ApplyEnabled}" Click="OnApply" Padding="18,7"/>
+            <Button Grid.Column="2" Content="退出" Click="OnExit" Padding="14,7"/>
+        </Grid>
+    </Grid>
+</Window>

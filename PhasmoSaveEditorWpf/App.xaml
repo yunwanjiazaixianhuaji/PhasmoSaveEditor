@@ -1,0 +1,15 @@
+<Application x:Class="PhasmoSaveEditor.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- 顺序不能反：Styles 定义 FieldCard / 各转换器 / 画刷，
+                     被后面两个模板字典用 StaticResource 前向引用，必须先加载 -->
+                <ResourceDictionary Source="Views/Templates/Styles.xaml"/>
+                <ResourceDictionary Source="Views/Templates/ScalarTemplates.xaml"/>
+                <ResourceDictionary Source="Views/Templates/ComplexTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

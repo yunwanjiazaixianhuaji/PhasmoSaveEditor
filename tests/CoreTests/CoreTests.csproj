@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>PhasmoSaveEditor.Tests</RootNamespace>
+    <AssemblyName>CoreTests</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <!-- 只跑核心逻辑，不需要 WPF -->
+    <UseWPF>false</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 直接链接被测源码，保证测的就是最终会用的那份代码 -->
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Core\SaveCrypto.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Core\SaveDocument.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Core\SafetyService.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Schema\EquipmentDefs.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Schema\FieldSchema.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Schema\FieldCatalog.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\IComplexValue.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\ColorValue.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\DictValue.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\ListValue.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\OutfitValue.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\WardrobeValue.cs" />
+    <Compile Include="..\..\PhasmoSaveEditorWpf\Complex\DifficultyValue.cs" />
+  </ItemGroup>
+
+</Project>

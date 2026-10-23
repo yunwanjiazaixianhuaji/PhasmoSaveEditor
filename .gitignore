@@ -1,0 +1,47 @@
+# ---- .NET / WPF 构建产物 ----
+bin/
+obj/
+dist/
+[Bb]uild/
+[Oo]ut/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ---- 单文件发布产物（120MB，超 GitHub 100MB 上限；改由 Releases 分发）----
+*.exe
+*.msi
+*.appx
+PublishProfiles/
+publish/
+
+# ---- 测试运行产生的临时副本 / 工作目录 ----
+tests/**/_e2ework_*/
+tests/**/_corework_*/
+*.bak-*
+field_mapping.txt
+
+# ---- 诊断日志 ----
+diag_progress.log
+
+# ---- 恐鬼症存档（明文含玩家名等隐私，绝不入库）----
+SaveFile.txt
+plain_save.txt
+complex_blocks.txt
+*.save
+*.save.txt
+
+# ---- IDE / 编辑器 ----
+.vs/
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# ---- 压缩包 ----
+*.zip
+*.7z
+*.rar

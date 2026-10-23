@@ -1,0 +1,151 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:f="clr-namespace:PhasmoSaveEditor.ViewModels.Fields">
+
+    <!-- 颜色：RGBA 四分量 + 十六进制取色 + 预览块 -->
+    <DataTemplate x:Key="ColorFieldTemplate" DataType="{x:Type f:ColorFieldViewModel}">
+        <Border Style="{StaticResource FieldCard}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FieldHeader}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="34" Height="34" CornerRadius="3" Margin="0,0,10,0"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                            Background="{Binding HexColor, Converter={StaticResource HexToBrush}}"/>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="R" Width="14" Foreground="{StaticResource DimBrush}"/>
+                            <TextBox Width="52" Text="{Binding R, Converter={StaticResource ColorComp}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="G" Width="14" Margin="8,0,0,0" Foreground="{StaticResource DimBrush}"/>
+                            <TextBox Width="52" Text="{Binding G, Converter={StaticResource ColorComp}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="B" Width="14" Foreground="{StaticResource DimBrush}"/>
+                            <TextBox Width="52" Text="{Binding B, Converter={StaticResource ColorComp}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="A" Width="14" Margin="8,0,0,0" Foreground="{StaticResource DimBrush}"/>
+                            <TextBox Width="52" Text="{Binding A, Converter={StaticResource ColorComp}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button Content="还原" Command="{Binding RevertCommand}" Margin="10,0,0,0" Padding="8,4"
+                            Visibility="{Binding IsModified, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <!-- 字典：可编辑表格（key / value），底部可增行、选中可删行 -->
+    <DataTemplate x:Key="DictFieldTemplate" DataType="{x:Type f:DictFieldViewModel}">
+        <Border Style="{StaticResource FieldCard}">
+            <StackPanel>
+                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FieldHeader}"/>
+                <DataGrid Height="180" Margin="0,8,0,0" ItemsSource="{Binding Rows}"
+                          SelectedItem="{Binding SelectedRow}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="键" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="值" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <TextBox Width="160" Text="{Binding NewKey, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="新键"/>
+                    <TextBox Width="80" Margin="6,0,0,0" Text="{Binding NewValue, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="新值"/>
+                    <Button Content="添加" Command="{Binding AddRowCommand}" Margin="8,0,0,0" Padding="10,4"/>
+                    <Button Content="删除选中" Command="{Binding RemoveRowCommand}" Padding="10,4"/>
+                    <Button Content="还原" Command="{Binding RevertCommand}" Padding="10,4"
+                            Visibility="{Binding IsModified, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding ValidationError}" Foreground="{StaticResource ErrBrush}" FontSize="11"
+                           Margin="0,4,0,0"
+                           Visibility="{Binding ValidationError, Converter={StaticResource NullToCollapsed}}"/>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <!-- 列表：可增删的字符串/整数条目 -->
+    <DataTemplate x:Key="ListFieldTemplate" DataType="{x:Type f:ListFieldViewModel}">
+        <Border Style="{StaticResource FieldCard}">
+            <StackPanel>
+                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FieldHeader}"/>
+                <ListBox Height="120" Margin="0,8,0,0" ItemsSource="{Binding Items}"
+                         SelectedItem="{Binding SelectedItem}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <TextBox Width="220" Text="{Binding NewItem, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="新条目"/>
+                    <Button Content="添加" Command="{Binding AddCommand}" Margin="8,0,0,0" Padding="10,4"/>
+                    <Button Content="删除选中" Command="{Binding RemoveCommand}" Padding="10,4"/>
+                    <Button Content="还原" Command="{Binding RevertCommand}" Padding="10,4"
+                            Visibility="{Binding IsModified, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <!-- 外观：槽位 + guid + 材质，可增删 -->
+    <DataTemplate x:Key="OutfitFieldTemplate" DataType="{x:Type f:OutfitFieldViewModel}">
+        <Border Style="{StaticResource FieldCard}">
+            <StackPanel>
+                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FieldHeader}"/>
+                <DataGrid Height="200" Margin="0,8,0,0" ItemsSource="{Binding Rows}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="槽位" Binding="{Binding SlotHint}" Width="130" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="外观 guid" Binding="{Binding Guid, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="材质" Binding="{Binding MaterialOption, UpdateSourceTrigger=PropertyChanged}" Width="60"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <Button Content="删除选中行" Command="{Binding RemoveRowCommand}" Padding="10,4"/>
+                    <Button Content="还原" Command="{Binding RevertCommand}" Padding="10,4"
+                            Visibility="{Binding IsModified, Converter={StaticResource BoolToVis}}"/>
+                    <TextBlock Margin="12,0,0,0" Foreground="{StaticResource DimBrush}" FontSize="11"
+                               TextWrapping="Wrap" MaxWidth="420"
+                               Text="guid 对应游戏内服饰资源。具体物品名需挖游戏资源才能映射，此处按 guid 编辑。"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <!-- 衣柜：guid 列表，可增删 -->
+    <DataTemplate x:Key="WardrobeFieldTemplate" DataType="{x:Type f:WardrobeFieldViewModel}">
+        <Border Style="{StaticResource FieldCard}">
+            <StackPanel>
+                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FieldHeader}"/>
+                <ListBox Height="180" Margin="0,8,0,0" FontFamily="Consolas" FontSize="12"
+                         ItemsSource="{Binding Guids}" SelectedItem="{Binding SelectedGuid}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <TextBox Width="280" FontFamily="Consolas"
+                             Text="{Binding NewGuid, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="新外观 guid"/>
+                    <Button Content="添加" Command="{Binding AddCommand}" Margin="8,0,0,0" Padding="10,4"/>
+                    <Button Content="删除选中" Command="{Binding RemoveCommand}" Padding="10,4"/>
+                    <Button Content="还原" Command="{Binding RevertCommand}" Padding="10,4"
+                            Visibility="{Binding IsModified, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding ValidationError}" Foreground="{StaticResource ErrBrush}" FontSize="11"
+                           Margin="0,4,0,0"
+                           Visibility="{Binding ValidationError, Converter={StaticResource NullToCollapsed}}"/>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <!-- 难度：只读展示子字段（含 _ES3Ref，改动可能失效，见设计文档） -->
+    <DataTemplate x:Key="DifficultyFieldTemplate" DataType="{x:Type f:DifficultyFieldViewModel}">
+        <Border Style="{StaticResource FieldCard}">
+            <StackPanel>
+                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FieldHeader}"/>
+                <DataGrid Height="240" Margin="0,8,0,0" ItemsSource="{Binding Fields}" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="参数" Binding="{Binding Zh}" Width="180"/>
+                        <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock Margin="0,6,0,0" Foreground="{StaticResource WarnBrush}" FontSize="11" TextWrapping="Wrap"
+                           Text="难度对象含 _ES3Ref 引用 ID 与多个子字段，改动可能与引用不一致而在游戏内失效，故此处只读展示。如需修改请用「高级」分类的原始块编辑器，并自行备份。"/>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>
